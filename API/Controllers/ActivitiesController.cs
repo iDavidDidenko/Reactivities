@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
+
 namespace API.Controllers
 {
     public class ActivitiesController : BaseApiController // Inheritance
@@ -25,7 +26,7 @@ namespace API.Controllers
         {
             return await _context.Activities.ToListAsync();
         }
-        
+
         // define a Root-parameter.
         [HttpGet("{id}")] // api/activities/X (X is the ID parameter)
         public async Task<ActionResult<Activity>> GetActivity(Guid id) // id need to match the name id

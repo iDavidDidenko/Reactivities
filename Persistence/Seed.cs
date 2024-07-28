@@ -1,20 +1,29 @@
 using Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence
 {
     public class Seed
     {
         public static async Task SeedData(DataContext context)
-        {   
+        {
+            // var existingActivities = await context.Activities.ToListAsync();
+
+            // // Remove all existing activities
+            // if (existingActivities.Any())
+            // {
+            //     context.Activities.RemoveRange(existingActivities);
+            //     await context.SaveChangesAsync();
+            // }
             // check if we already have an Activity inside the DB.
             // if we do, we dont want to seed more.
-            if(context.Activities.Any()) return;
+            if (context.Activities.Any()) return;
 
             var activities = new List<Activity>
             {
                 new Activity
                 {
-                    Title = "Activity 1",
+                    Title = "title - Activity 1",
                     Date = DateTime.UtcNow.AddMonths(-2),
                     Description = "hey, it's first Activity.",
                     Category = "trip",
@@ -23,7 +32,7 @@ namespace Persistence
                 },
                 new Activity
                 {
-                    Title = "Activity 2",
+                    Title = "title - Activity 2",
                     Date = DateTime.UtcNow.AddMonths(-1),
                     Description = "hey, it's second Activity.",
                     Category = "music",
@@ -32,7 +41,7 @@ namespace Persistence
                 },
                 new Activity
                 {
-                    Title = "Activity 3",
+                    Title = "title - Activity 3",
                     Date = DateTime.UtcNow.AddMonths(1),
                     Description = "hey, it's last Activity.",
                     Category = "eat",

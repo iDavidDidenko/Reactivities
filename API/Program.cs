@@ -22,6 +22,11 @@ builder.Services.AddDbContext<DataContext>(ops =>
     ops.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddCors(ops => {
+    ops.AddPolicy("CorsPolicy", policy =>{
+        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+    });
+});
 
 var app = builder.Build();
 
@@ -32,8 +37,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("CorsPolicy");
 
- app.UseAuthorization();
+app.UseAuthorization();
 
 app.MapControllers();
 
@@ -41,20 +47,35 @@ app.MapControllers();
 // 1. get access to the server -> DataContext 
 
 //Service scopes are used in dependency injection to manage the lifetime of services. 
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
 
-try
-{
-    var context = services.GetRequiredService<DataContext>();
-    //This applies any pending migrations to the database. This ensures that the database schema is up to date with the current model.
-    await context.Database.MigrateAsync();
-    await Seed.SeedData(context);
-}
-catch(Exception ex)
-{
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An erroe occured during migration");
-}
+// app.Services --> This is the IServiceProvider instance associated with the application.
+// The purpose of creating a new scope is to manage the lifecycle of scoped services. 
+/*
+Scoped services are created once per request or per scope. 
+When the scope ends, the services created within that scope are disposed of and released from memory. 
+This ensures efficient resource management and avoids memory leaks.
+*/
 
-app.Run();
+// the "using" to delete the Service after he finish deal with Mirgation
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    try
+    {
+     //GetRequiredService --> Microsoft.Extensions.DependencyInjection
+     var context = services.GetRequiredService<DataContext>();
+     // MigrateAsync --> is an asynchronous method that applies any pending migrations to the database.
+     await context.Database.MigrateAsync();
+     await Seed.SeedData(context);
+    }
+    catch(Exception ex)
+    {
+     var logger = services.GetRequiredService<ILogger<Program>>();
+     logger.LogError(ex, "An erroe occured during migration");
+    }
+};
+
+//app.MapGet("/", () => "Hello World!");
+
+app.Run();   
