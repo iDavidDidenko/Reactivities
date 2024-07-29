@@ -1,4 +1,5 @@
 // read from configuration files - appsettings.development.json + appsettings.json
+using Application.Activities;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -27,6 +28,9 @@ builder.Services.AddCors(ops => {
         policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
     });
 });
+
+// Mediator
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(MyList.Handler).Assembly));
 
 var app = builder.Build();
 
