@@ -1,5 +1,4 @@
-// read from configuration files - appsettings.development.json + appsettings.json
-using Application.Activities;
+using API.Extenstions;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -7,30 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-
-
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-// we add here a new DB service
-// DataContext the class we use to DBcontext
-builder.Services.AddDbContext<DataContext>(ops =>
-{
-    // define the connection in - "appsettings.development.json"
-    ops.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
-builder.Services.AddCors(ops => {
-    ops.AddPolicy("CorsPolicy", policy =>{
-        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
-    });
-});
-
-// Mediator
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(MyList.Handler).Assembly));
+// Note that there is only one parameter, config (not Services, we used THIS..)
+// we will add the service there - AddApplicationServices
+builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 

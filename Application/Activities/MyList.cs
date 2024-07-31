@@ -5,6 +5,7 @@ using MediatR;
 using Persistence;
 using Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Activities
 {
@@ -24,7 +25,8 @@ namespace Application.Activities
             {
                 _context = context;
             }
-            async Task<List<Activity>> IRequestHandler<Query, List<Activity>>.Handle(Query request, CancellationToken cancellationToken)
+            // CancellationToken us to actually cancel the request if it's no longer needed.
+            public async Task<List<Activity>> Handle(Query request, CancellationToken token)
             {
                 return await _context.Activities.ToListAsync();
             }
