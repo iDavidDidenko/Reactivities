@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import {Image, Card, Button } from 'semantic-ui-react';
 import { Activity } from '../../../App/Models/Activity';
 
